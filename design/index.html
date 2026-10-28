@@ -4,10 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modular POS design gallery</title>
-    <script type="module" crossorigin src="./assets/workshop-DFF7XbfU.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/workshop-DP4YsZAi.css">
-    <!-- The look sample needs the app's server, so it is hidden on this static copy. -->
-    <style>a[href="/specimen.html"] { display: none; }</style>
+    <script type="module" crossorigin src="./assets/workshop-PDwHq2yc.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/workshop-BgBOM7Jz.css">
+    <!-- Static copy for bibimpapi.com: pages that need the app's server aren't here, so links to them are hidden and
+         cards that embed them show a note instead. The Workshop's own close-ups point at this page. -->
+    <style>
+      a[href="/specimen.html"], a[href^="/products.html"], a[href^="/index.html"], a[href^="/site"], a[href^="/spike"] { display: none; }
+      .ws-crop:has(> iframe[srcdoc])::after, .ws-stage:has(.ws-stage-page > iframe[srcdoc])::after {
+        content: "Live in the app only. This static copy has no server."; position: absolute; inset: 0; z-index: 1;
+        display: grid; place-items: center; padding: 12px; text-align: center; font: 13px/1.4 system-ui, sans-serif;
+        color: GrayText; background: Canvas;
+      }
+    </style>
+    <script>
+      (() => {
+        const note = '<body style="margin:0;padding:24px 16px;font:13px/1.4 system-ui,sans-serif;color:GrayText;background:Canvas;max-inline-size:220px">Live in the app only. This static copy has no server.</body>';
+        const server = /^\/(products\.html|specimen\.html|index\.html|site\/)/;
+        const fix = (el) => {
+          if (el.tagName === "IFRAME") {
+            const src = el.getAttribute("src") || "";
+            if (src.startsWith("/workshop.html")) el.setAttribute("src", "./index.html" + src.slice("/workshop.html".length));
+            else if (server.test(src) && !el.hasAttribute("srcdoc")) el.setAttribute("srcdoc", note);
+          } else if (el.tagName === "A" && el.getAttribute("href")?.startsWith("/workshop.html")) {
+            el.setAttribute("href", "./index.html" + el.getAttribute("href").slice("/workshop.html".length));
+          }
+        };
+        const scan = (root) => root.querySelectorAll?.("iframe, a").forEach(fix);
+        new MutationObserver((ms) => ms.forEach((m) => {
+          if (m.type === "attributes") fix(m.target);
+          else m.addedNodes.forEach((n) => { if (n.nodeType === 1) { fix(n); scan(n); } });
+        })).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ["src", "href"] });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
